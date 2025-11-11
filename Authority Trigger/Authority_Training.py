@@ -9,7 +9,6 @@ to create a robust and finetune-resistant benign backdoor.
 from __future__ import division, print_function
 
 import argparse
-import os
 from itertools import cycle
 import torch
 import torch.nn as nn
@@ -19,36 +18,19 @@ from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
 from torchvision.datasets.folder import IMG_EXTENSIONS
 
-from resnet import ResNet18, ResNet50
-from vgg import VGG16_CIFAR100
-from vit import create_vit
+import sys
+import os
 
-class Average(object):
-    """Computes and stores the average and current value."""
-    def __init__(self): 
-        self.sum, self.count = 0, 0
-    def update(self, val, n=1): 
-        self.sum += val * n
-        self.count += n
-    @property
-    def average(self): 
-        return self.sum / self.count if self.count > 0 else 0.0
-    def __str__(self): 
-        return f'{self.average:.6f}'
+current_script_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(current_script_path)
+root_dir = os.path.dirname(current_dir)
 
-class Accuracy(object):
-    """Computes classification accuracy."""
-    def __init__(self): 
-        self.correct, self.count = 0, 0
-    def update(self, output, label):
-        preds = output.data.argmax(dim=1)
-        self.correct += preds.eq(label.data).sum().item()
-        self.count += output.size(0)
-    @property
-    def accuracy(self): 
-        return self.correct / self.count if self.count > 0 else 0.0
-    def __str__(self): 
-        return f'{self.accuracy * 100:.2f}%'
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+from Models.resnet import ResNet18, ResNet50
+from Models.vgg import VGG16_CIFAR100
+from Models.vit import create_vit
+from Common.utils import AverageMeter, Accuracy
 
 class SourceTaggedDataset(torch.utils.data.Dataset):
     """
@@ -522,3 +504,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
