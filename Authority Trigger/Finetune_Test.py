@@ -23,37 +23,23 @@ from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
 import numpy as np
 import argparse
-import os
 import csv
 import time
 
-from resnet import ResNet18, ResNet50
-from vgg import VGG16_CIFAR100
-from vit import create_vit
+import sys
+import os
 
-class AverageMeter(object):
-    def __init__(self):
-        self.reset()
-    def reset(self):
-        self.val, self.avg, self.sum, self.count = 0, 0, 0, 0
-    def update(self, val, n=1):
-        self.val = val
-        self.sum += val * n
-        self.count += n
-        self.avg = self.sum / self.count
+current_script_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(current_script_path)
+root_dir = os.path.dirname(current_dir)
 
-class Accuracy(object):
-    def __init__(self):
-        self.correct, self.count = 0, 0
-    def update(self, output, label):
-        preds = output.data.argmax(dim=1)
-        self.correct += preds.eq(label.data).sum().item()
-        self.count += output.size(0)
-    @property
-    def accuracy(self):
-        return self.correct / self.count if self.count > 0 else 0.0
-    def __str__(self):
-        return f'{self.accuracy * 100:.2f}%'
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+  
+from Models.resnet import ResNet18, ResNet50
+from Models.vgg import VGG16_CIFAR100
+from Models.vit import create_vit
+from Common.utils import AverageMeter, Accuracy
 
 def get_finetune_dataloaders(dataset_name, model_name, train_dir, test_dir_clean, test_dir_triggered, batch_size, finetune_samples):
     target_size = 32
@@ -312,3 +298,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
