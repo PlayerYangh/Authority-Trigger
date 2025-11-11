@@ -1,7 +1,6 @@
 from __future__ import division, print_function
 
 import argparse
-import os
 import time
 
 import torch
@@ -12,11 +11,20 @@ from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
 from torchvision.datasets.folder import IMG_EXTENSIONS
 
-from resnet import ResNet18, ResNet50
-from vgg import VGG16_CIFAR100
-from vit import create_vit
+import sys
+import os
 
-from utils import AverageMeter, Accuracy
+current_script_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(current_script_path)
+root_dir = os.path.dirname(current_dir)
+
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+    
+from Models.resnet import ResNet18, ResNet50
+from Models.vgg import VGG16_CIFAR100
+from Models.vit import create_vit
+from Common.utils import AverageMeter, Accuracy
 
 # --- Data Loader ---
 def get_dataloader(dataset_name, model_name, train_dir, test_dir, batch_size, num_workers=2):
@@ -208,3 +216,4 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     run(args)
+
