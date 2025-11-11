@@ -23,16 +23,24 @@ from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 from PIL import Image
 import numpy as np
+import sys
 import os
+
+current_script_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(current_script_path)
+root_dir = os.path.dirname(current_dir)
+
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+
+from Models.resnet import ResNet18, ResNet50
+from Models.vgg import VGG16_CIFAR100
+from Models.vit import create_vit
+from Common.utils import AverageMeter, Accuracy
+
 import argparse
 from tqdm import tqdm
 from torchvision.datasets.folder import IMG_EXTENSIONS
-
-from resnet import ResNet18, ResNet50
-from vgg import VGG16_CIFAR100
-from vit import create_vit
-
-from utils import AverageMeter as Average, Accuracy
 
 def get_dataset_params(dataset_name):
     """
@@ -299,3 +307,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     adaptive_attack(args)
+
