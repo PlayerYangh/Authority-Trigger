@@ -20,7 +20,16 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 
 import argparse
 import numpy as np
+import sys
 import os
+
+current_script_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(current_script_path)
+root_dir = os.path.dirname(current_dir)
+
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+from Models.resnet import ResNet18
 import random
 import time
 import torch
@@ -28,10 +37,6 @@ import torch.utils.data as data
 
 from torchvision import transforms as T
 
-# Ensure resnet.py is in the same directory
-from resnet import ResNet18
-
-# --- Helper functions (copied from training script) ---
 def get_model(model_path, num_classes):
     """Loads a ResNet18 model from a .pth file."""
     if not os.path.exists(model_path):
@@ -58,8 +63,6 @@ def preprocess(inputs):
     inputs = np.transpose(inputs / 255.0, [0, 3, 1, 2])
     inputs = torch.FloatTensor(inputs)
     return inputs
-# -----------------------------------------
-
 
 def main():
     args = parser.parse_args()
@@ -157,5 +160,6 @@ if __name__ == '__main__':
                         help='Batch size for evaluation')
     parser.add_argument('--num_classes', default=10,   type=int, 
                         help='Number of classes for the dataset (e.g., 10 for CIFAR-10)')
+
 
     main()
