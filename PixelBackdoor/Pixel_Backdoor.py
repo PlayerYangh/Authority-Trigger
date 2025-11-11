@@ -26,7 +26,16 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 
 import argparse
 import numpy as np
+import sys
 import os
+
+current_script_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(current_script_path)
+root_dir = os.path.dirname(current_dir)
+
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+from Models.resnet import ResNet18
 import random
 import time
 import torch
@@ -34,7 +43,6 @@ import torch
 from torchvision import transforms as T
 
 # This script is hard-coded for ResNet18 and requires the inversion_torch library
-from resnet import ResNet18
 from inversion_torch import PixelBackdoor
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -196,4 +204,5 @@ if __name__ == '__main__':
     time_end = time.time()
     print('='*50)
     print(f'Total Running time: {(time_end - time_start) / 60:.4f} m')
+
     print('='*50)
